@@ -1,0 +1,30 @@
+.how-it-works {
+    padding: 40px 20px;
+    background-color: #f1f3f5;
+  }
+  
+  .how-it-works h2 {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+  
+  .steps {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+  
+  .step {
+    max-width: 250px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: white;
+    text-align: center;
+  }
+  
+  .step h3 {
+    margin-bottom: 10px;
+  }
+  

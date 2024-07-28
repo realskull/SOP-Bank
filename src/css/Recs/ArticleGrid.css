@@ -1,0 +1,7 @@
+/* src/css/Recs/ArticleGrid.css */
+.article-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Adjusted min-width */
+  gap: 30px; /* Increased spacing between cards */
+  padding: 20px;
+}
