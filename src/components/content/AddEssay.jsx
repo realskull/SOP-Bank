@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { db, auth } from '../../config/firebaseConfig';
-import { collection, addDoc } from 'firebase/firestore';
+import { collection, addDoc, doc, getDoc } from 'firebase/firestore';
 import '../../css/content/AddEssay.css';
 import { readFileAsText } from '../../utils/fileUtils';
 import DOMPurify from 'dompurify';
@@ -13,7 +13,23 @@ function AddEssay() {
     const [description, setDescription] = useState('');
     const [content, setContent] = useState('');
     const [file, setFile] = useState(null);
+    const [userData, setUserData] = useState(null);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const fetchUserData = async () => {
+            const user = auth.currentUser;
+            if (user) {
+                const userDocRef = doc(db, 'Users', user.uid);
+                const userDoc = await getDoc(userDocRef);
+                if (userDoc.exists()) {
+                    setUserData(userDoc.data());
+                }
+            }
+        };
+
+        fetchUserData();
+    }, []);
 
     const handleFileChange = (e) => {
         const selectedFile = e.target.files[0];
@@ -31,7 +47,7 @@ function AddEssay() {
         e.preventDefault();
 
         const user = auth.currentUser;
-        if (user) {
+        if (user && userData) {
             try {
                 // Sanitize the content before storing it
                 const sanitizedContent = DOMPurify.sanitize(content);
@@ -41,6 +57,12 @@ function AddEssay() {
                     title,
                     description,
                     content: sanitizedContent,
+                    fieldOfStudy: userData.fieldOfStudy,
+                    lastAcademicLevel: userData.lastAcademicLevel,
+                    averageGPA: userData.averageGPA,
+                    languageProficiencyTest: userData.languageProficiencyTest,
+                    languageProficiencyOverall: userData.languageProficiencyOverall,
+                    availableFunds: userData.availableFunds,
                     createdAt: new Date()
                 });
                 navigate('/');
@@ -48,7 +70,7 @@ function AddEssay() {
                 console.error('Error adding essay:', error.message);
             }
         } else {
-            console.error('No user signed in');
+            console.error('No user signed in or user data not available');
         }
     };
 

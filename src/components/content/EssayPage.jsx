@@ -88,7 +88,6 @@ const EssayPage = () => {
                     <ArticleGrid />
                 </div>
             </div>
-            <Footer />
         </>
     );
 };

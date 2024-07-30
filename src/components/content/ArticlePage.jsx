@@ -90,7 +90,6 @@ const ArticlePage = () => {
                     <ArticleGrid />
                 </div>
             </div>
-            <Footer />
         </>
     );
 };
