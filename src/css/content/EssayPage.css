@@ -72,3 +72,90 @@
 .recommendations h2 {
     margin-bottom: 20px;
 }
+
+/* Profile.css */
+.article-content {
+    position: relative;
+}
+
+.read-more-container {
+    position: relative;
+}
+
+.read-more-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.7); /* Semi-transparent white background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.read-more-btn {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.blurred {
+    filter: blur(5px); /* Adjust the blur radius as needed */
+    transition: filter 0.3s ease;
+}
+
+.article-content.full .blurred {
+    filter: none; /* Remove blur when full content is shown */
+}
+
+.article-content.full .read-more-container {
+    display: none; /* Hide the "Read More" button and overlay when full content is shown */
+}
+
+/* Profile.css */
+.article-content {
+    position: relative;
+}
+
+.read-more-container {
+    position: relative;
+}
+
+.read-more-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.7); /* Semi-transparent background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.read-more-btn {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.blurred {
+    filter: blur(5px); /* Adjust the blur radius as needed */
+    transition: filter 0.3s ease;
+    overflow: hidden; /* Ensures that blur effect is contained */
+}
+
+.article-content.full .blurred {
+    filter: none; /* Remove blur when full content is shown */
+}
+
+.article-content.full .read-more-container {
+    display: none; /* Hide the "Read More" button and overlay when full content is shown */
+}

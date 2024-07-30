@@ -1,8 +1,7 @@
-// src/pages/SignUp.js
 import React, { useState } from 'react';
-import { auth, db } from '../../config/firebaseConfig'; // Correct import of auth and db
+import { auth, db } from '../../config/firebaseConfig';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
-import { collection, doc, setDoc } from 'firebase/firestore';
+import { doc, setDoc } from 'firebase/firestore';
 import '../../css/Auth/SignUp.css';
 import { useNavigate } from 'react-router-dom';
 
@@ -42,6 +41,7 @@ function SignUp() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError(''); // Reset error message
     try {
       let userCredential;
       if (isSignUp) {
@@ -49,7 +49,7 @@ function SignUp() {
         const user = userCredential.user;
 
         // Store additional user data in Firestore
-        await setDoc(doc(db, 'users', user.uid), {
+        await setDoc(doc(db, 'Users', user.uid), {
           name,
           lastAcademicLevel,
           fieldOfStudy,

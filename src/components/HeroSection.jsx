@@ -13,7 +13,6 @@ function HeroSection() {
                 <a href="#features" className={`${styles.button} ${styles.buttonPrimary}`}>Explore Features</a>
             </div>
 
-
         </section>
     );
 }

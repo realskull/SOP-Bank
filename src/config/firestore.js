@@ -1,31 +1,38 @@
-// src/firestore.js
-import { db } from './config/firebaseConfig';
-import { collection, addDoc, updateDoc, doc, arrayUnion } from 'firebase/firestore';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from 'firebase/auth';
+import { auth } from './firebaseConfig';
 
-const addEssay = async (content, tags, userId) => {
+// Sign up function
+const signUp = async (email, password) => {
     try {
-        // Input validation
-        if (!content.trim() || !tags.trim()) {
-            throw new Error('Content and tags cannot be empty');
-        }
-
-        // Add essay to Firestore
-        const essayRef = await addDoc(collection(db, 'Essays'), {
-            userId: userId,
-            content: content,
-            tags: tags
-        });
-
-        // Update user's document with the new essay ID
-        const userDocRef = doc(db, 'Users', userId);
-        await updateDoc(userDocRef, {
-            essays: arrayUnion(essayRef.id)
-        });
-
-        console.log('Essay added with ID:', essayRef.id);
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        console.log('User signed up:', userCredential.user);
+        return userCredential.user; // Return user data on successful sign-up
     } catch (error) {
-        console.error('Error adding essay:', error.message);
+        console.error('Error signing up:', error.message);
+        return { error: error.message }; // Return error message on failure
     }
 };
 
-export { addEssay };
+// Sign in function
+const signIn = async (email, password) => {
+    try {
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        console.log('User signed in:', userCredential.user);
+        return userCredential.user; // Return user data on successful sign-in
+    } catch (error) {
+        console.error('Error signing in:', error.message);
+        return { error: error.message }; // Return error message on failure
+    }
+};
+
+// Sign out function
+const signOutUser = async () => {
+    try {
+        await signOut(auth);
+        console.log('User signed out');
+    } catch (error) {
+        console.error('Error signing out:', error.message);
+    }
+};
+
+export { signUp, signIn, signOutUser };

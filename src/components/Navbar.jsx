@@ -1,45 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faCaretDown } from '@fortawesome/free-solid-svg-icons';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import '../css/Navbar.css';
+import { useAuth } from './Auth/AuthContext';
+import { signOutUser } from '../config/auth';
 
 function Navbar() {
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [user, setUser] = useState({
-        name: '',
-        profilePicture: '',
-    });
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-
-    useEffect(() => {
-        // Logic to check if user is logged in
-        // For example: setIsLoggedIn(auth.currentUser !== null);
-    }, []);
+    const navigate = useNavigate();
+    const { currentUser } = useAuth();
 
     const toggleDropdown = () => {
         setIsDropdownOpen(!isDropdownOpen);
     };
 
-    const handleLogout = () => {
-        // Clear user state and set isLoggedIn to false
-        setUser({
-            name: '',
-            profilePicture: '',
-        });
-        setIsLoggedIn(false);
+    const handleLogout = async () => {
+        try {
+            await signOutUser();
+            navigate('/');
+        } catch (error) {
+            console.error('Error during logout:', error.message);
+        }
         setIsDropdownOpen(false); // Close the dropdown after logout
-        console.log('Logout clicked');
-    };
-
-    const handleLogin = () => {
-        // Simulate a successful login
-        setUser({
-            name: 'John Doe',
-            profilePicture: 'https://via.placeholder.com/32',
-        });
-        setIsLoggedIn(true);
-        console.log('Login successful');
     };
 
     return (
@@ -57,10 +40,10 @@ function Navbar() {
             </div>
 
             <div className="userProfile">
-                {isLoggedIn ? (
+                {currentUser ? (
                     <div className="userInfo" onClick={toggleDropdown}>
-                        <img src={user.profilePicture} alt="User Profile" />
-                        <span>{user.name}</span>
+                        <img src={currentUser.photoURL || 'https://via.placeholder.com/32'} alt="User Profile" />
+                        <span>{currentUser.name || 'User'}</span>
                         <FontAwesomeIcon icon={faCaretDown} className={`dropdownArrow ${isDropdownOpen ? 'open' : ''}`} />
                         {isDropdownOpen && (
                             <div className="dropdownMenu">
@@ -72,8 +55,8 @@ function Navbar() {
                 ) : (
                     <Link to="/signin" className="signInButton">Sign In</Link>
                 )}
-                {isLoggedIn && (
-                    <Link to="/add-essay" className="uploadButton">Upload</Link>
+                {currentUser && (
+                    <Link to="/add-essay" className="signInButton">Upload</Link>
                 )}
             </div>
         </nav>

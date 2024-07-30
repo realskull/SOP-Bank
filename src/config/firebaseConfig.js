@@ -5,25 +5,23 @@ import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore'; // Import Firestore functions
-import { getFunctions } from 'firebase/functions'; // Import Cloud Functions
 
-
+console.log(process.env)
 
 const firebaseConfig = {
-    apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
-    authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
-    projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
-    storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
-    messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
-    appId: process.env.REACT_APP_FIREBASE_APP_ID,
-    measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID
-  };
+  apiKey: "AIzaSyCjvZz_jcL0mnScgXsEp6ekdo5ii8vstfs",
+  authDomain: "sop-bank.firebaseapp.com",
+  projectId: "sop-bank",
+  storageBucket: "sop-bank.appspot.com",
+  messagingSenderId: "565256660932",
+  appId: "1:565256660932:web:1705dec7d66c112d6c6691",
+  measurementId: "G-WS183XGFXC"
+};
   
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const auth = getAuth(app); // Initialize Auth
 const db = getFirestore(app); // Initialize Firestore
-const functions = getFunctions(app); // Initialize Cloud Functions
 
-export { auth, db, functions }; // Export Auth, Firestore, and Functions
+export { auth, db}; // Export Auth, Firestore, and Functions
