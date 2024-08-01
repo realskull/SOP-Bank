@@ -1,0 +1,80 @@
+/* src/css/EssayList.css */
+.essay-list-container {
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  h2 {
+    margin-top: 0;
+  }
+  
+  .essay-list {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .essay-item {
+    margin-bottom: 20px;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    background-color: #f9f9f9;
+  }
+  
+  .essay-item h3 {
+    margin: 0;
+    font-size: 1.2rem;
+  }
+  
+  .essay-info p {
+    margin: 10px 0;
+  }
+  
+  .tags {
+    margin-top: 10px;
+  }
+  
+  .tag {
+    display: inline-block;
+    padding: 5px 10px;
+    margin-right: 5px;
+    background-color: #e0e0e0;
+    border-radius: 4px;
+    font-size: 0.9rem;
+  }
+  
+  .delete-button {
+    background-color: #ff4d4d;
+    color: #fff;
+    border: none;
+    padding: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-top: 10px;
+  }
+  
+  .delete-button:hover {
+    background-color: #ff3333;
+  }
+  
+  .load-more {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    margin-top: 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+  }
+  
+  .load-more:hover {
+    background-color: #0056b3;
+  }
+  

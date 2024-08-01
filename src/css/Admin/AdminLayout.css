@@ -1,20 +1,33 @@
-/* src/css/Admin/AdminLayout.css */
+/* src/components/AdminLayout.css */
 .admin-layout {
-  display: flex;
+  display: flex; /* Use flexbox to layout the panel and content */
+  height: 100vh; /* Full viewport height */
+  background-color: #f0f2f5; /* Light background for the whole layout */
 }
 
 .admin-panel {
-  width: 250px; /* Adjust width as needed */
-  background-color: #f4f4f4; /* Sidebar background color */
-  height: 100vh; /* Full height */
-  position: fixed; /* Fixed position */
-  top: 0;
-  left: 0;
+  flex: 0 0 20vw; /* Fixed width up to 20% of viewport width */
+  max-width: 20vw; /* Maximum width of the panel */
+  background-color: #4b6cb7; /* Sidebar background color */
+  height: 100%; /* Full height */
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2); /* Shadow for separation */
+  overflow-y: auto; /* Allow sidebar to scroll if necessary */
+  transition: all 0.3s ease; /* Smooth transition for changes */
+  display: flex;
+  flex-direction: column; /* Ensure sidebar grows with content */
+}
+
+.admin-panel:hover {
+  flex: 0 0 25vw; /* Expand width on hover to 25% of viewport width */
+  max-width: 25vw; /* Maximum width on hover */
 }
 
 .admin-content {
-  margin-left: 250px; /* Match sidebar width */
+  flex: 1; /* Take up remaining space */
   padding: 20px;
-  width: calc(100% - 250px); /* Adjust width */
-  box-sizing: border-box;
+  background-color: #fff; /* Background color for content */
+  border-radius: 8px; /* Rounded corners for content */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Light shadow for content box */
+  transition: all 0.3s ease; /* Smooth transition for changes */
+  overflow-y: auto; /* Allow content to scroll if necessary */
 }

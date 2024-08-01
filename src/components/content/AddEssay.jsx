@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import { db, auth } from '../../config/firebaseConfig';
-import { collection, addDoc, doc, getDoc } from 'firebase/firestore';
+import { collection, addDoc } from 'firebase/firestore';
+import { useAuth } from '../Auth/AuthContext'; // Adjust the import path as necessary
+import { db } from '../../config/firebaseConfig';
 import '../../css/content/AddEssay.css';
 import { readFileAsText } from '../../utils/fileUtils';
 import DOMPurify from 'dompurify';
@@ -13,23 +14,8 @@ function AddEssay() {
     const [description, setDescription] = useState('');
     const [content, setContent] = useState('');
     const [file, setFile] = useState(null);
-    const [userData, setUserData] = useState(null);
+    const { currentUser } = useAuth(); // Use the useAuth hook
     const navigate = useNavigate();
-
-    useEffect(() => {
-        const fetchUserData = async () => {
-            const user = auth.currentUser;
-            if (user) {
-                const userDocRef = doc(db, 'Users', user.uid);
-                const userDoc = await getDoc(userDocRef);
-                if (userDoc.exists()) {
-                    setUserData(userDoc.data());
-                }
-            }
-        };
-
-        fetchUserData();
-    }, []);
 
     const handleFileChange = (e) => {
         const selectedFile = e.target.files[0];
@@ -46,23 +32,22 @@ function AddEssay() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const user = auth.currentUser;
-        if (user && userData) {
+        if (currentUser) {
             try {
                 // Sanitize the content before storing it
                 const sanitizedContent = DOMPurify.sanitize(content);
 
                 await addDoc(collection(db, 'Essays'), {
-                    userId: user.uid,
+                    userId: currentUser.uid,
                     title,
                     description,
                     content: sanitizedContent,
-                    fieldOfStudy: userData.fieldOfStudy,
-                    lastAcademicLevel: userData.lastAcademicLevel,
-                    averageGPA: userData.averageGPA,
-                    languageProficiencyTest: userData.languageProficiencyTest,
-                    languageProficiencyOverall: userData.languageProficiencyOverall,
-                    availableFunds: userData.availableFunds,
+                    fieldOfStudy: currentUser.fieldOfStudy,
+                    lastAcademicLevel: currentUser.lastAcademicLevel,
+                    averageGPA: currentUser.averageGPA,
+                    languageProficiencyTest: currentUser.languageProficiencyTest,
+                    languageProficiencyScore: currentUser.languageProficiencyScore,
+                    availableFunds: currentUser.availableFunds,
                     createdAt: new Date()
                 });
                 navigate('/');
