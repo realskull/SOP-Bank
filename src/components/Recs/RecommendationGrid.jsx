@@ -1,10 +1,11 @@
-// src/components/RecommendationGrid.js
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../Auth/AuthContext';
 import { db } from '../../config/firebaseConfig';
-import { collection, addDoc, doc, getDoc, getDocs, query, where } from 'firebase/firestore';
-
+import { collection, doc, getDoc, getDocs, query } from 'firebase/firestore';
 import RecommendationCard from './RecommendationCard';
+
+import LoadingOverlay from './LoadingOverlay';
+
 import '../../css/Recs/RecommendationGrid.css';
 
 const RecommendationGrid = () => {
@@ -24,41 +25,57 @@ const RecommendationGrid = () => {
           if (userDoc.exists()) {
             const userData = userDoc.data();
 
-            // Query essays based on user profile fields
+            // Query essays with more permissive conditions
             const essaysQuery = query(
-              collection(db, 'Essays'),
-              where('fieldOfStudy', '==', userData.fieldOfStudy),
-              where('lastAcademicLevel', '==', userData.lastAcademicLevel),
-              where('averageGPA', '>=', userData.averageGPA - 0.5), // Example: within 0.5 GPA points
-              where('languageProficiencyTest', '==', userData.languageProficiencyTest),
-              where('availableFunds', '==', userData.availableFunds)
+              collection(db, 'Essays')
             );
             const querySnapshot = await getDocs(essaysQuery);
 
-            // Fetch essays and calculate field matches
+            // Fetch essays and apply client-side filtering
             const fetchedEssays = querySnapshot.docs.map(doc => {
               const data = doc.data();
               let matchingFields = 0;
+              let priorityScore = 0;
 
-              if (data.fieldOfStudy === userData.fieldOfStudy) matchingFields++;
-              if (data.lastAcademicLevel === userData.lastAcademicLevel) matchingFields++;
-              if (Math.abs(data.averageGPA - userData.averageGPA) <= 0.5) matchingFields++;
-              if (data.languageProficiencyTest === userData.languageProficiencyTest) matchingFields++;
-              if (data.languageProficiencyOverall === userData.languageProficiencyOverall) matchingFields++;
-              if (data.availableFunds === userData.availableFunds) matchingFields++;
+              // Apply field match conditions
+              if (data.fieldOfStudy === userData.fieldOfStudy) {
+                priorityScore += 100;
+                matchingFields++;
+              }
+              if (data.lastAcademicLevel === userData.lastAcademicLevel) {
+                priorityScore += 80;
+                matchingFields++;
+              }
+              if (Math.abs(data.averageGPA - userData.averageGPA) <= 0.5) {
+                priorityScore += 60;
+                matchingFields++;
+              }
+              if (data.availableFunds === userData.availableFunds) {
+                priorityScore += 40;
+                matchingFields++;
+              }
 
-              return { id: doc.id, ...data, matchingFields };
+              // Return essay data with matching fields and priority score
+              return { id: doc.id, ...data, matchingFields, priorityScore };
             });
 
-            // Sort by matching fields and randomize the top 3
-            const sortedEssays = fetchedEssays.sort((a, b) => b.matchingFields - a.matchingFields);
+            // Filter out essays with missing or irrelevant fields
+            const filteredEssays = fetchedEssays.filter(essay => 
+              essay.fieldOfStudy && 
+              essay.lastAcademicLevel &&
+              (essay.averageGPA !== undefined) &&
+              essay.availableFunds
+            );
+
+            // Sort by priority score and randomize the top 3
+            const sortedEssays = filteredEssays.sort((a, b) => b.priorityScore - a.priorityScore);
             const topEssays = sortedEssays.slice(0, 3);
             const shuffledEssays = topEssays.sort(() => 0.5 - Math.random());
 
             setRecommendations(shuffledEssays);
           }
         } catch (error) {
-          setError('Failed to load recommendations.'+error);
+          setError('Failed to load recommendations. ' + error.message);
         } finally {
           setLoading(false);
         }
@@ -68,7 +85,7 @@ const RecommendationGrid = () => {
     fetchRecommendations();
   }, [currentUser]);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <div className="recommendation-grid"><LoadingOverlay /></div>; // Use LoadingOverlay during loading state
   if (error) return <div className="error-message">{error}</div>;
 
   return (

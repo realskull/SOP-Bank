@@ -58,6 +58,10 @@ function Navbar() {
                 {currentUser && (
                     <Link to="/add-essay" className="signInButton">Upload</Link>
                 )}
+                {currentUser && currentUser.isAdmin ? (
+                    <Link to="/admin" className="signInButton">Admin Panel</Link>
+                ) : null}
+
             </div>
         </nav>
     );

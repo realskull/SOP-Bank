@@ -1,7 +1,9 @@
+/* src/css/Recs/RecommendationGrid.css */
+
 .recommendation-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 20px;
-    padding: 20px;
-  }
-  
+  position: relative; /* Ensure that the loading spinner is positioned relative to this container */
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+  padding: 20px;
+}

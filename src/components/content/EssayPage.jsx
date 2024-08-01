@@ -1,4 +1,3 @@
-// src/components/EssayPage/EssayPage.jsx
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { doc, getDoc } from 'firebase/firestore';
@@ -8,11 +7,12 @@ import ArticleGrid from '../Recs/ArticleGrid';
 import '../../css/content/ArticlePage.css';
 import Footer from '../Footer';
 import DOMPurify from 'dompurify';
+import LoadingSpinner from '../LoadingSpinner'; // Import the LoadingSpinner component
 
 const EssayPage = () => {
     const { id } = useParams();
     const [essay, setEssay] = useState(null);
-    const [showFullEssay, setShowFullEssay] = useState(false);
+    const [showFullEssay, setShowFullEssay] = useState(true);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 
@@ -41,7 +41,7 @@ const EssayPage = () => {
         setShowFullEssay(true);
     };
 
-    if (loading) return <div>Loading...</div>;
+    if (loading) return <LoadingSpinner />; // Show the loading spinner
     if (error) return <div className="error-message">{error}</div>;
 
     if (!essay) return null;
@@ -51,7 +51,7 @@ const EssayPage = () => {
         const firstPart = essay.content.substring(0, splitIndex);
         const remainingPart = essay.content.substring(splitIndex);
 
-        if (true) {
+        if (showFullEssay) {
             return (
                 <div className="article-content full">
                     <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(essay.content) }} />
@@ -71,12 +71,11 @@ const EssayPage = () => {
             );
         }
     };
-                //<img src={essay.thumbnail || 'https://via.placeholder.com/800x400'} alt={essay.title} className="article-thumbnail" //
+
     return (
         <>
             <div className="article-page">
                 <div className="article-header">
-
                     <h1>{essay.title}</h1>
                 </div>
                 <p><strong>Description:</strong> {essay.description}</p>

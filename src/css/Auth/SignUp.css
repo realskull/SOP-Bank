@@ -13,63 +13,119 @@
 
 .auth-box {
   background: #fff;
-  padding: 1.5rem;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
   max-width: 400px;
   width: 100%;
   text-align: center;
+  transform: translateY(-30px);
+  opacity: 0;
+  animation: fadeInUp 0.6s ease-out forwards;
 }
 
 h1 {
   margin-bottom: 1rem;
   color: #333;
-  font-size: 1.5rem;
+  font-size: 1.8rem;
+  font-weight: 600;
+  animation: slideIn 0.5s ease-out;
 }
 
 .input-group {
-  margin-bottom: 0.75rem;
+  margin-bottom: 1rem;
+  position: relative;
+  animation: fadeIn 0.5s ease-out;
 }
 
 input {
   width: 100%;
-  padding: 0.6rem;
+  padding: 0.8rem;
   border: 1px solid #ccc;
   border-radius: 4px;
   font-size: 1rem;
+  transition: border-color 0.3s;
+}
+
+input:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 8px rgba(0, 123, 255, 0.2);
 }
 
 button.btn-submit {
   width: 100%;
-  padding: 0.6rem;
+  padding: 0.8rem;
   background-color: #007bff;
   color: #fff;
   border: none;
   border-radius: 4px;
-  font-size: 1rem;
+  font-size: 1.1rem;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s, transform 0.2s;
 }
 
 button.btn-submit:hover {
   background-color: #0056b3;
+  transform: translateY(-2px);
+}
+
+button.btn-submit:active {
+  background-color: #004080;
+  transform: translateY(1px);
 }
 
 .error-message {
   color: #e74c3c;
   margin-bottom: 1rem;
+  font-size: 0.9rem;
+  animation: fadeIn 0.5s ease-out;
 }
 
 .redirect-text {
   margin-top: 1rem;
   font-size: 0.9rem;
+  animation: fadeIn 0.5s ease-out;
 }
 
 .redirect-text a {
   color: #007bff;
   text-decoration: none;
+  transition: color 0.3s;
 }
 
 .redirect-text a:hover {
+  color: #0056b3;
   text-decoration: underline;
+}
+
+@keyframes fadeInUp {
+  from {
+    transform: translateY(-30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }

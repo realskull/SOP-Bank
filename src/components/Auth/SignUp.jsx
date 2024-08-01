@@ -4,6 +4,7 @@ import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'fire
 import { doc, setDoc } from 'firebase/firestore';
 import '../../css/Auth/SignUp.css';
 import { useNavigate } from 'react-router-dom';
+import { lastAcademicLevels, fieldsOfStudy, languageTests, ieltsBands, toeflScores, pteScores, cefrLevels } from '../utils/options';
 
 function SignUp() {
   const [email, setEmail] = useState('');
@@ -13,7 +14,7 @@ function SignUp() {
   const [fieldOfStudy, setFieldOfStudy] = useState('');
   const [averageGPA, setAverageGPA] = useState('');
   const [languageProficiencyTest, setLanguageProficiencyTest] = useState('');
-  const [languageProficiencyOverall, setLanguageProficiencyOverall] = useState('');
+  const [languageProficiencyScore, setLanguageProficiencyScore] = useState('');
   const [availableFunds, setAvailableFunds] = useState('');
   const [error, setError] = useState('');
   const [isSignUp, setIsSignUp] = useState(false);
@@ -55,7 +56,7 @@ function SignUp() {
           fieldOfStudy,
           averageGPA,
           languageProficiencyTest,
-          languageProficiencyOverall,
+          languageProficiencyScore: mapProficiencyScore(languageProficiencyTest, languageProficiencyScore),
           availableFunds,
           email
         });
@@ -65,6 +66,22 @@ function SignUp() {
       navigate('/');
     } catch (error) {
       setError(handleAuthError(error));
+    }
+  };
+
+  const mapProficiencyScore = (test, score) => {
+    // Example mappings, adjust as needed
+    switch (test) {
+      case 'IELTS':
+        return parseInt(score); // IELTS bands directly
+      case 'TOEFL':
+        return parseInt(score); // TOEFL scores directly
+      case 'PTE':
+        return parseInt(score.split('-')[0]); // Use the high end of PTE range
+      case 'CEFR':
+        return cefrLevels.indexOf(score) * 20 + 20; // Simplified scoring for CEFR
+      default:
+        return 0;
     }
   };
 
@@ -104,21 +121,29 @@ function SignUp() {
               </div>
               <div className="input-group">
                 <label>Last Academic Level:</label>
-                <input
-                  type="text"
+                <select
                   value={lastAcademicLevel}
                   onChange={(e) => setLastAcademicLevel(e.target.value)}
                   required
-                />
+                >
+                  <option value="">Select...</option>
+                  {lastAcademicLevels.map(level => (
+                    <option key={level} value={level}>{level}</option>
+                  ))}
+                </select>
               </div>
               <div className="input-group">
                 <label>Field of Study:</label>
-                <input
-                  type="text"
+                <select
                   value={fieldOfStudy}
                   onChange={(e) => setFieldOfStudy(e.target.value)}
                   required
-                />
+                >
+                  <option value="">Select...</option>
+                  {fieldsOfStudy.map(field => (
+                    <option key={field} value={field}>{field}</option>
+                  ))}
+                </select>
               </div>
               <div className="input-group">
                 <label>Average GPA:</label>
@@ -131,22 +156,32 @@ function SignUp() {
               </div>
               <div className="input-group">
                 <label>Language Proficiency Test:</label>
-                <input
-                  type="text"
+                <select
                   value={languageProficiencyTest}
                   onChange={(e) => setLanguageProficiencyTest(e.target.value)}
                   required
-                />
+                >
+                  <option value="">Select...</option>
+                  {languageTests.map(test => (
+                    <option key={test.value} value={test.value}>{test.label}</option>
+                  ))}
+                </select>
               </div>
-              <div className="input-group">
-                <label>Language Proficiency Overall:</label>
-                <input
-                  type="text"
-                  value={languageProficiencyOverall}
-                  onChange={(e) => setLanguageProficiencyOverall(e.target.value)}
-                  required
-                />
-              </div>
+              {languageProficiencyTest && (
+                <div className="input-group">
+                  <label>Language Proficiency Score:</label>
+                  <select
+                    value={languageProficiencyScore}
+                    onChange={(e) => setLanguageProficiencyScore(e.target.value)}
+                    required
+                  >
+                    <option value="">Select...</option>
+                    {getProficiencyOptions(languageProficiencyTest).map(score => (
+                      <option key={score} value={score}>{score}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
               <div className="input-group">
                 <label>Available Funds:</label>
                 <input
@@ -172,5 +207,21 @@ function SignUp() {
     </div>
   );
 }
+
+// Function to get proficiency score options based on the selected test
+const getProficiencyOptions = (test) => {
+  switch (test) {
+    case 'IELTS':
+      return ieltsBands;
+    case 'TOEFL':
+      return toeflScores;
+    case 'PTE':
+      return pteScores;
+    case 'CEFR':
+      return cefrLevels;
+    default:
+      return [];
+  }
+};
 
 export default SignUp;

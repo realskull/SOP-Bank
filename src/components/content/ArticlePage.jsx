@@ -7,6 +7,7 @@ import RecommendationGrid from '../Recs/RecommendationGrid';
 import ArticleGrid from '../Recs/ArticleGrid';
 import '../../css/content/ArticlePage.css';
 import Footer from '../Footer';
+import LoadingSpinner from '../LoadingSpinner'; // Import the LoadingSpinner component
 
 const ArticlePage = () => {
     const { articleUID } = useParams();
@@ -72,7 +73,7 @@ const ArticlePage = () => {
         }
     };
 
-    if (loading) return <div>Loading...</div>;
+    if (loading) return <LoadingSpinner />; // Show the loading spinner
     if (error) return <div className="error-message">{error}</div>;
 
     return (
