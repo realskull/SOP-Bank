@@ -1,0 +1,90 @@
+/* src/components/AdminPanel.css */
+
+.admin-panel {
+    display: flex;
+    height: 100vh;
+  }
+  
+  .sidebar {
+    width: 250px;
+    background-color: #343a40;
+    color: #fff;
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+    position: relative;
+    overflow: auto;
+    transition: width 0.3s ease;
+  }
+  
+  .sidebar:hover {
+    width: 300px;
+  }
+  
+  .sidebar h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    text-align: center;
+  }
+  
+  .sidebar ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .sidebar ul li {
+    margin: 15px 0;
+  }
+  
+  .sidebar ul li a {
+    color: #fff;
+    text-decoration: none;
+    display: block;
+    padding: 10px;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+  }
+  
+  .sidebar ul li a:hover {
+    background-color: #495057;
+  }
+  
+  .content {
+    flex: 1;
+    padding: 20px;
+    background-color: #f8f9fa;
+    overflow: auto;
+  }
+  
+  .content h2 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+  }
+  
+  .content form label {
+    display: block;
+    margin: 10px 0;
+  }
+  
+  .content form input,
+  .content form textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+  
+  .content form button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .content form button:hover {
+    background-color: #0056b3;
+  }
+  
