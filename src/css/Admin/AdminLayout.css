@@ -1,21 +1,20 @@
 /* src/css/Admin/AdminLayout.css */
-
 .admin-layout {
-    display: flex;
-    height: 100vh; /* Full viewport height */
-  }
-  
-  .admin-panel {
-    width: 250px; /* Sidebar width */
-    background-color: #fff; /* Background color for sidebar */
-    padding: 20px;
-    border-right: 1px solid #ddd; /* Border for separation */
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); /* Shadow for visual separation */
-  }
-  
-  .admin-content {
-    flex: 1; /* Takes up remaining space */
-    padding: 20px;
-    background-color: #f4f4f4; /* Light grey background */
-  }
-  
+  display: flex;
+}
+
+.admin-panel {
+  width: 250px; /* Adjust width as needed */
+  background-color: #f4f4f4; /* Sidebar background color */
+  height: 100vh; /* Full height */
+  position: fixed; /* Fixed position */
+  top: 0;
+  left: 0;
+}
+
+.admin-content {
+  margin-left: 250px; /* Match sidebar width */
+  padding: 20px;
+  width: calc(100% - 250px); /* Adjust width */
+  box-sizing: border-box;
+}
