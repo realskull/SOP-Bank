@@ -16,7 +16,6 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
-        console.log('User authenticated:', user);
         const userDoc = await getDoc(doc(db, 'Users', user.uid));
         if (userDoc.exists()) {
           setCurrentUser({ uid: user.uid, ...userDoc.data() });
@@ -30,10 +29,6 @@ export function AuthProvider({ children }) {
 
     return unsubscribe;
   }, []);
-
-  useEffect(() => {
-    console.log('Current User:', currentUser);
-  }, [currentUser]);
 
   return (
     <AuthContext.Provider value={{ currentUser }}>
