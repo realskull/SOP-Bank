@@ -7,6 +7,8 @@ import { Link } from 'react-router-dom'; // Import Link from react-router-dom
 
 import LoadingOverlay from '../Recs/LoadingOverlay';
 
+import {commonToTestScore} from '../utils/options';
+
 const EssayList = () => {
   const [essays, setEssays] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -98,9 +100,11 @@ const EssayList = () => {
                   <p className="essay-description">{essay.description}</p>
                   <div className="essay-tags">
                     <span className="tag">Author: {authors[essay.userId] || 'Unknown'}</span>
-                    <span className="tag">Field: {essay.fieldOfStudy}</span>
+                    <span className="tag">{essay.lastAcademicLevel}</span>
+                    <span className="tag">{essay.fieldOfStudy}</span>
                     <span className="tag">GPA: {essay.averageGPA}</span>
-                    <span className="tag">Test: {essay.languageProficiencyTest}</span>
+                    <span className="tag">{essay.languageProficiencyTest}</span>
+                    <span className="tag">Band {commonToTestScore(essay.languageProficiencyScore,essay.languageProficiencyTest)}</span>
                   </div>
                   <button onClick={(e) => {
                     e.stopPropagation();

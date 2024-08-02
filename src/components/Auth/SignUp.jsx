@@ -4,7 +4,7 @@ import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'fire
 import { doc, setDoc } from 'firebase/firestore';
 import '../../css/Auth/SignUp.css';
 import { useNavigate } from 'react-router-dom';
-import { lastAcademicLevels, fieldsOfStudy, languageTests, ieltsBands, toeflScores, pteScores, cefrLevels } from '../utils/options';
+import { lastAcademicLevels, fieldsOfStudy, languageTests, proficiencyOptions } from '../utils/options';
 
 function SignUp() {
   const [email, setEmail] = useState('');
@@ -69,20 +69,85 @@ function SignUp() {
     }
   };
 
+  // Function to map proficiency scores to a common scale
   const mapProficiencyScore = (test, score) => {
-    // Example mappings, adjust as needed
     switch (test) {
       case 'IELTS':
-        return parseInt(score); // IELTS bands directly
+        return mapIELTS(score);
       case 'TOEFL':
-        return parseInt(score); // TOEFL scores directly
+        return mapTOEFL(score);
       case 'PTE':
-        return parseInt(score.split('-')[0]); // Use the high end of PTE range
+        return mapPTE(score);
       case 'CEFR':
-        return cefrLevels.indexOf(score) * 20 + 20; // Simplified scoring for CEFR
+        return mapCEFR(score);
       default:
-        return 0;
+        return 0; // Default to 0 if test is not recognized
     }
+  };
+
+  // Mappings for each test to the 0-100 scale
+  const mapIELTS = (score) => {
+    const bands = {
+      '9': 100,
+      '8.5': 90,
+      '8': 80,
+      '7.5': 70,
+      '7': 60,
+      '6.5': 50,
+      '6': 40,
+      '5.5': 30,
+      '5': 20,
+      'Below 5': 10
+    };
+    return mapToRange(bands[score] || 0);
+  };
+
+  const mapTOEFL = (score) => {
+    const scores = {
+      '120-115': 100,
+      '114-110': 90,
+      '109-105': 80,
+      '104-100': 70,
+      '99-95': 60,
+      '94-90': 50,
+      '89-85': 40,
+      '84-80': 30,
+      '79-75': 20,
+      'Below 75': 10
+    };
+    return mapToRange(scores[score] || 0);
+  };
+
+  const mapPTE = (score) => {
+    const scores = {
+      '90-85': 100,
+      '84-80': 90,
+      '79-70': 80,
+      'Below 70': 60
+    };
+    return mapToRange(scores[score] || 0);
+  };
+
+  const mapCEFR = (score) => {
+    const levels = {
+      'C2': 100,
+      'C1': 90,
+      'B2': 80,
+      'B1': 70,
+      'A2': 60,
+      'A1': 50
+    };
+    return mapToRange(levels[score] || 0);
+  };
+
+  // Convert the raw score to a range
+  const mapToRange = (score) => {
+    if (score >= 91) return 100; // CEFR C2
+    if (score >= 81) return 90;  // CEFR C1
+    if (score >= 61) return 80;  // CEFR B2
+    if (score >= 41) return 70;  // CEFR B1
+    if (score >= 21) return 60;  // CEFR A2
+    return 50;                   // CEFR A1
   };
 
   return (
@@ -127,8 +192,10 @@ function SignUp() {
                   required
                 >
                   <option value="">Select...</option>
-                  {lastAcademicLevels.map(level => (
-                    <option key={level} value={level}>{level}</option>
+                  {lastAcademicLevels.map((level) => (
+                    <option key={level} value={level}>
+                      {level}
+                    </option>
                   ))}
                 </select>
               </div>
@@ -140,8 +207,10 @@ function SignUp() {
                   required
                 >
                   <option value="">Select...</option>
-                  {fieldsOfStudy.map(field => (
-                    <option key={field} value={field}>{field}</option>
+                  {fieldsOfStudy.map((field) => (
+                    <option key={field} value={field}>
+                      {field}
+                    </option>
                   ))}
                 </select>
               </div>
@@ -158,12 +227,17 @@ function SignUp() {
                 <label>Language Proficiency Test:</label>
                 <select
                   value={languageProficiencyTest}
-                  onChange={(e) => setLanguageProficiencyTest(e.target.value)}
+                  onChange={(e) => {
+                    setLanguageProficiencyTest(e.target.value);
+                    setLanguageProficiencyScore(''); // Reset proficiency score when test changes
+                  }}
                   required
                 >
                   <option value="">Select...</option>
-                  {languageTests.map(test => (
-                    <option key={test.value} value={test.value}>{test.label}</option>
+                  {languageTests.map((test) => (
+                    <option key={test.value} value={test.value}>
+                      {test.label}
+                    </option>
                   ))}
                 </select>
               </div>
@@ -176,8 +250,10 @@ function SignUp() {
                     required
                   >
                     <option value="">Select...</option>
-                    {getProficiencyOptions(languageProficiencyTest).map(score => (
-                      <option key={score} value={score}>{score}</option>
+                    {proficiencyOptions[languageProficiencyTest]?.map((option) => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
                     ))}
                   </select>
                 </div>
@@ -194,34 +270,14 @@ function SignUp() {
             </>
           )}
           {error && <p className="error-message">{error}</p>}
-          <button type="submit" className="btn-submit">{isSignUp ? 'Sign Up' : 'Sign In'}</button>
+          <button type="submit">{isSignUp ? 'Sign Up' : 'Sign In'}</button>
         </form>
-        <p className="redirect-text">
-          {isSignUp ? (
-            <>Already have an account? <a href="#" onClick={() => setIsSignUp(false)}>Sign In</a></>
-          ) : (
-            <>Don't have an account? <a href="#" onClick={() => setIsSignUp(true)}>Sign Up</a></>
-          )}
-        </p>
+        <button onClick={() => setIsSignUp(!isSignUp)}>
+          {isSignUp ? 'Already have an account? Sign In' : 'Don’t have an account? Sign Up'}
+        </button>
       </div>
     </div>
   );
 }
-
-// Function to get proficiency score options based on the selected test
-const getProficiencyOptions = (test) => {
-  switch (test) {
-    case 'IELTS':
-      return ieltsBands;
-    case 'TOEFL':
-      return toeflScores;
-    case 'PTE':
-      return pteScores;
-    case 'CEFR':
-      return cefrLevels;
-    default:
-      return [];
-  }
-};
 
 export default SignUp;

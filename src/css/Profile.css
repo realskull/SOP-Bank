@@ -29,12 +29,14 @@
 .essays-list li {
     padding: 10px;
     border-bottom: 1px solid #ddd;
-}
-
-.essay-info {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    position: relative; /* Add this to ensure the delete button can be positioned absolutely */
+}
+
+.essay-info {
+    flex: 1;
 }
 
 .delete-button {
@@ -44,6 +46,10 @@
     padding: 8px 12px;
     cursor: pointer;
     border-radius: 4px;
+    position: absolute;
+    right: 10px; /* Adjust as needed for spacing */
+    top: 50%;
+    transform: translateY(-50%); /* Center vertically */
 }
 
 .delete-button:hover {
