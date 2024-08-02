@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { db } from '../../config/firebaseConfig';
-import { collection, query, getDocs, orderBy, doc, deleteDoc } from 'firebase/firestore';
+import { collection, query, getDocs, orderBy, doc, deleteDoc, getDoc } from 'firebase/firestore';
 import Modal from '../Modal'; // Import the Modal component
 import '../../css/Admin/EssayList.css'; // Import the CSS file for essay list styling
+import { Link } from 'react-router-dom'; // Import Link from react-router-dom
+
+import LoadingOverlay from '../Recs/LoadingOverlay';
 
 const EssayList = () => {
   const [essays, setEssays] = useState([]);
@@ -10,11 +13,14 @@ const EssayList = () => {
   const [error, setError] = useState('');
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedEssayId, setSelectedEssayId] = useState(null);
+  const [authors, setAuthors] = useState({}); // To store author names
 
-  // Fetch all essays
+  // Fetch all essays and authors
   const fetchEssays = async () => {
     try {
       setLoading(true);
+
+      // Fetch essays
       const essaysQuery = query(
         collection(db, 'Essays'),
         orderBy('createdAt', 'desc') // Ensure 'createdAt' is a Firestore Timestamp
@@ -27,6 +33,18 @@ const EssayList = () => {
       }));
 
       setEssays(fetchedEssays);
+
+      // Fetch authors
+      const userIds = [...new Set(fetchedEssays.map(essay => essay.userId))];
+      const authorsData = {};
+      for (const userId of userIds) {
+        const userDocRef = doc(db, 'Users', userId);
+        const userDoc = await getDoc(userDocRef);
+        if (userDoc.exists()) {
+          authorsData[userId] = userDoc.data().name; // Fetch the 'name' field
+        }
+      }
+      setAuthors(authorsData);
     } catch (error) {
       console.error('Error fetching essays:', error); // Log detailed error
       setError(`Failed to load essays: ${error.message || error}`);
@@ -60,7 +78,7 @@ const EssayList = () => {
     setSelectedEssayId(null);
   };
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <div className="recommendation-grid"><LoadingOverlay /></div>;
   if (error) return <div className="error-message">{error}</div>;
 
   return (
@@ -72,16 +90,24 @@ const EssayList = () => {
         <ul className="essay-list">
           {essays.map(essay => (
             <li key={essay.id} className="essay-item">
-              <div className="essay-info">
-                <h3><a href={`/essay/${essay.id}`}>{essay.title}</a></h3>
-                <p>{essay.description}</p>
-                <div className="tags">
-                  {essay.tags && essay.tags.map((tag, index) => (
-                    <span key={index} className="tag">{tag}</span>
-                  ))}
+              
+                <div className="essay-card">
+                  <div className="essay-header">
+                  <Link to={`/essay/${essay.id}`} className="essay-link"><h3 className="essay-title">{essay.title}</h3> </Link>
+                  </div>
+                  <p className="essay-description">{essay.description}</p>
+                  <div className="essay-tags">
+                    <span className="tag">Author: {authors[essay.userId] || 'Unknown'}</span>
+                    <span className="tag">Field: {essay.fieldOfStudy}</span>
+                    <span className="tag">GPA: {essay.averageGPA}</span>
+                    <span className="tag">Test: {essay.languageProficiencyTest}</span>
+                  </div>
+                  <button onClick={(e) => {
+                    e.stopPropagation();
+                    openDeleteModal(essay.id);
+                  }} className="delete-button">Delete</button>
                 </div>
-                <button onClick={() => openDeleteModal(essay.id)} className="delete-button">Delete</button>
-              </div>
+              
             </li>
           ))}
         </ul>
