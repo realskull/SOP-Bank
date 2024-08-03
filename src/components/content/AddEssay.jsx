@@ -17,6 +17,12 @@ function AddEssay() {
     const { currentUser } = useAuth(); // Use the useAuth hook
     const navigate = useNavigate();
 
+    useEffect(() => {
+        if (!currentUser) {
+            navigate('/signin'); // Redirect to signup if not logged in
+        }
+    }, [currentUser, navigate]);
+
     const handleFileChange = (e) => {
         const selectedFile = e.target.files[0];
         setFile(selectedFile);
@@ -59,6 +65,10 @@ function AddEssay() {
         }
     };
 
+    if (!currentUser) {
+        return null; // Optionally show a loading spinner or message until redirect
+    }
+
     return (
         <div className="addEssayContainer">
             <h2>Add Your Essay</h2>
@@ -82,15 +92,7 @@ function AddEssay() {
                         required
                     />
                 </div>
-                <div className="formGroup">
-                    <label htmlFor="fileUpload">Already have a written SOP? (PDF/DOC/TXT):</label>
-                    <input
-                        type="file"
-                        id="fileUpload"
-                        accept=".pdf, .doc, .docx, .txt"
-                        onChange={handleFileChange}
-                    />
-                </div>
+
                 <div className="formGroup">
                     <label htmlFor="content">Content:</label>
                     <ReactQuill
@@ -139,3 +141,18 @@ const editorFormats = [
 ];
 
 export default AddEssay;
+
+{
+    /*
+                    <div className="formGroup">
+                    <label htmlFor="fileUpload">Already have a written SOP? (PDF/DOC/TXT):</label>
+                    <input
+                        type="file"
+                        id="fileUpload"
+                        accept=".pdf, .doc, .docx, .txt"
+                        onChange={handleFileChange}
+                    />
+                </div>
+
+    */
+}

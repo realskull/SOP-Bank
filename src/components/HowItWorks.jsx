@@ -3,9 +3,9 @@ import '../css/HowItWorks.css';
 
 const steps = [
   { step: 1, description: "Sign up for a free account." },
-  { step: 2, description: "Upload your Statement of Purpose or browse existing ones." },
-  { step: 3, description: "Find essays that match your application profile." },
-  { step: 4, description: "Read and refine your essay based on feedback." },
+  { step: 2, description: "Browse essays shared by the community!" },
+  { step: 3, description: "Contribute to the community by sharing your essays too!" },
+  { step: 4, description: "Read free articles on how to write a good SOP. FOR FREE!" },
 ];
 
 const HowItWorks = () => {

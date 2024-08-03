@@ -153,7 +153,7 @@ function SignUp() {
   return (
     <div className="auth-container">
       <div className="auth-box">
-        <h1>{isSignUp ? 'Create Account' : 'Sign In'}</h1>
+        <h1>{isSignUp ? 'Create Account' : 'Log In'}</h1>
         <form onSubmit={handleSubmit}>
           <div className="input-group">
             <label>Email:</label>
@@ -272,8 +272,8 @@ function SignUp() {
           {error && <p className="error-message">{error}</p>}
           <button type="submit">{isSignUp ? 'Sign Up' : 'Sign In'}</button>
         </form>
-        <button onClick={() => setIsSignUp(!isSignUp)}>
-          {isSignUp ? 'Already have an account? Sign In' : 'Don’t have an account? Sign Up'}
+        <button className="" onClick={() => setIsSignUp(!isSignUp)}>
+          {isSignUp ? 'Login old account' : 'Create a new account'}
         </button>
       </div>
     </div>

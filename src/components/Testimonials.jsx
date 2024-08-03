@@ -3,11 +3,11 @@ import '../css/Testimonials.css';
 
 const testimonials = [
   {
-    name: "John Doe",
-    quote: "This platform helped me craft the perfect SOP and get into my dream school!",
+    name: "Anonymous",
+    quote: "This platform helped me craft the perfect SOP and get into my dream country!",
   },
   {
-    name: "Jane Smith",
+    name: "Anonymous",
     quote: "An invaluable resource for anyone applying abroad. Highly recommend!",
   }
 ];

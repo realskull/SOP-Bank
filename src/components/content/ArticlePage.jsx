@@ -1,88 +1,84 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import DOMPurify from 'dompurify'; // Import DOMPurify
-import { db } from '../../config/firebaseConfig'; // Adjust the import path as needed
 import { doc, getDoc } from 'firebase/firestore';
+import { db } from '../../config/firebaseConfig';
 import RecommendationGrid from '../Recs/RecommendationGrid';
 import ArticleGrid from '../Recs/ArticleGrid';
 import '../../css/content/ArticlePage.css';
 import Footer from '../Footer';
+import DOMPurify from 'dompurify';
 import LoadingSpinner from '../LoadingSpinner'; // Import the LoadingSpinner component
 
 const ArticlePage = () => {
-    const { articleUID } = useParams();
-    const [article, setArticle] = useState(null);
-    const [showFullArticle, setShowFullArticle] = useState(false);
+    const { id } = useParams();
+    const [essay, setEssay] = useState(null);
+    const [showFullEssay, setShowFullEssay] = useState(true);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 
     useEffect(() => {
-        const fetchArticle = async () => {
+        const fetchEssay = async () => {
             try {
-                const articleDocRef = doc(db, 'Articles', articleUID); // Adjust collection name if necessary
-                const articleDoc = await getDoc(articleDocRef);
-
-                if (articleDoc.exists()) {
-                    setArticle(articleDoc.data());
+                const essayDocRef = doc(db, 'Articles', id);
+                const essayDoc = await getDoc(essayDocRef);
+                
+                if (essayDoc.exists()) {
+                    setEssay(essayDoc.data());
                 } else {
-                    setError('Article not found.');
+                    setError('Essay not found.');
                 }
             } catch (error) {
-                setError('Failed to fetch article.');
+                setError('Failed to load essay.');
             } finally {
                 setLoading(false);
             }
         };
 
-        fetchArticle();
-    }, [articleUID]);
+        fetchEssay();
+    }, [id]);
 
     const handleReadMore = () => {
-        setShowFullArticle(true);
+        setShowFullEssay(true);
     };
 
+    if (loading) return <LoadingSpinner />; // Show the loading spinner
+    if (error) return <div className="error-message">{error}</div>;
+
+    if (!essay) return null;
+
     const renderContent = () => {
-        if (!article) return null;
+        const splitIndex = Math.floor(essay.content.length * 0.25); // 25% of the content
+        const firstPart = essay.content.substring(0, splitIndex);
+        const remainingPart = essay.content.substring(splitIndex);
 
-        const splitIndex = Math.floor(article.content.length * 0.25); // 25% of the content
-        const firstPart = article.content.substring(0, splitIndex);
-        const remainingPart = article.content.substring(splitIndex);
-
-        // Sanitize content
-        const sanitizedFirstPart = DOMPurify.sanitize(firstPart);
-        const sanitizedRemainingPart = DOMPurify.sanitize(remainingPart);
-
-        if (showFullArticle) {
+        if (showFullEssay) {
             return (
                 <div className="article-content full">
-                    <div dangerouslySetInnerHTML={{ __html: sanitizedFirstPart + sanitizedRemainingPart }} />
+                    <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(essay.content) }} />
                 </div>
             );
         } else {
             return (
                 <div className="article-content">
-                    <div dangerouslySetInnerHTML={{ __html: sanitizedFirstPart }} />
+                    <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(firstPart) }} />
                     <div className="read-more-container">
                         <div className="read-more-overlay">
                             <button onClick={handleReadMore} className="read-more-btn">Read More</button>
                         </div>
-                        <div className="blurred" dangerouslySetInnerHTML={{ __html: sanitizedRemainingPart }} />
+                        <div className="blurred" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(remainingPart) }} />
                     </div>
                 </div>
             );
         }
     };
 
-    if (loading) return <LoadingSpinner />; // Show the loading spinner
-    if (error) return <div className="error-message">{error}</div>;
-
     return (
         <>
             <div className="article-page">
                 <div className="article-header">
-                    {article.thumbnail && <img src={article.thumbnail} alt={article.title} className="article-thumbnail" />}
-                    <h1>{article.title}</h1>
+                    <h1>{essay.title}</h1>
                 </div>
+                <p><strong>Description:</strong> {essay.description}</p>
                 {renderContent()}
                 <div className="recommendations">
                     <h2>Related Essays</h2>

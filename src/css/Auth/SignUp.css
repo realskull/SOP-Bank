@@ -6,8 +6,7 @@
   align-items: center;
   min-height: calc(100vh - 60px); /* Adjust based on the height of your navbar and footer */
   background: linear-gradient(135deg, #f6f9fc, #e9eff1);
-  padding-top: 60px; /* Adjust based on the height of your navbar */
-  padding-bottom: 60px; /* Adjust based on the height of your footer */
+  padding: 60px 0; /* Adjust based on the height of your navbar and footer */
   box-sizing: border-box;
 }
 
@@ -15,8 +14,8 @@
   background: #fff;
   padding: 2rem;
   border-radius: 12px;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-  max-width: 400px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  max-width: 450px;
   width: 100%;
   text-align: center;
   transform: translateY(-30px);
@@ -25,52 +24,62 @@
 }
 
 h1 {
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
   color: #333;
-  font-size: 1.8rem;
-  font-weight: 600;
+  font-size: 2rem;
+  font-weight: 700;
   animation: slideIn 0.5s ease-out;
 }
 
 .input-group {
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
   position: relative;
   animation: fadeIn 0.5s ease-out;
 }
 
-input {
-  width: 100%;
-  padding: 0.8rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 1rem;
-  transition: border-color 0.3s;
+label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  color: #555;
+  font-weight: 500;
 }
 
-input:focus {
+input,
+select {
+  width: 100%;
+  padding: 0.8rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+input:focus,
+select:focus {
   border-color: #007bff;
   outline: none;
   box-shadow: 0 0 8px rgba(0, 123, 255, 0.2);
 }
 
-button.btn-submit {
+button {
   width: 100%;
   padding: 0.8rem;
   background-color: #007bff;
   color: #fff;
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
   font-size: 1.1rem;
   cursor: pointer;
   transition: background-color 0.3s, transform 0.2s;
 }
 
-button.btn-submit:hover {
+button:hover {
   background-color: #0056b3;
   transform: translateY(-2px);
 }
 
-button.btn-submit:active {
+button:active {
   background-color: #004080;
   transform: translateY(1px);
 }
@@ -83,8 +92,9 @@ button.btn-submit:active {
 }
 
 .redirect-text {
-  margin-top: 1rem;
+  margin-top: 1.5rem;
   font-size: 0.9rem;
+  color: #333;
   animation: fadeIn 0.5s ease-out;
 }
 

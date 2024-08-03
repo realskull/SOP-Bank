@@ -3,16 +3,14 @@ import '../css/CTASection.css';
 
 import styles from '../css/Buttons.module.css'
 
+import { Link } from 'react-router-dom';
+
 const CTASection = () => {
   return (
     <div className="cta-section">
       <div className="cta">
         <h2>Start Sharing Your Essays Today!</h2>
-        <button className={`${styles.button} ${styles.buttonPrimary}`}>Upload Your Essay</button>
-      </div>
-      <div className="cta">
-        <h2>Explore Essays and Articles</h2>
-        <button className={`${styles.button} ${styles.buttonPrimary}`}>Browse Now</button>
+        <Link href="/add-essay" className={`${styles.button} ${styles.buttonPrimary}`}>Upload Your Essay</Link>
       </div>
     </div>
   );

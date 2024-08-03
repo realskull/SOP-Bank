@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../Auth/AuthContext';
 import { db } from '../../config/firebaseConfig';
-import { collection, doc, getDoc, getDocs, query } from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs, query, orderBy, limit } from 'firebase/firestore';
 import RecommendationCard from './RecommendationCard';
-
 import LoadingOverlay from './LoadingOverlay';
-
 import '../../css/Recs/RecommendationGrid.css';
 
 const RecommendationGrid = () => {
@@ -16,8 +14,11 @@ const RecommendationGrid = () => {
 
   useEffect(() => {
     const fetchRecommendations = async () => {
-      if (currentUser) {
-        try {
+      setLoading(true);
+      setError('');
+
+      try {
+        if (currentUser) {
           // Fetch current user data
           const userDocRef = doc(db, 'Users', currentUser.uid);
           const userDoc = await getDoc(userDocRef);
@@ -26,9 +27,7 @@ const RecommendationGrid = () => {
             const userData = userDoc.data();
 
             // Query essays with more permissive conditions
-            const essaysQuery = query(
-              collection(db, 'Essays')
-            );
+            const essaysQuery = query(collection(db, 'Essays'));
             const querySnapshot = await getDocs(essaysQuery);
 
             // Fetch essays and apply client-side filtering
@@ -74,11 +73,26 @@ const RecommendationGrid = () => {
 
             setRecommendations(shuffledEssays);
           }
-        } catch (error) {
-          setError('Failed to load recommendations. ' + error.message);
-        } finally {
-          setLoading(false);
+        } else {
+          // Fetch the latest 3 essays if not signed in
+          const latestEssaysQuery = query(
+            collection(db, 'Essays'),
+            orderBy('createdAt', 'desc'),
+            limit(3)
+          );
+          const querySnapshot = await getDocs(latestEssaysQuery);
+
+          const latestEssays = querySnapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+          }));
+
+          setRecommendations(latestEssays);
         }
+      } catch (error) {
+        setError('Failed to load recommendations. ' + error.message);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -91,7 +105,12 @@ const RecommendationGrid = () => {
   return (
     <div className="recommendation-grid">
       {recommendations.map(rec => (
-        <RecommendationCard key={rec.id} title={rec.title} description={rec.description} link={`/essay/${rec.id}`} />
+        <RecommendationCard
+          key={rec.id}
+          title={rec.title}
+          description={rec.description}
+          link={`/essay/${rec.id}`}
+        />
       ))}
     </div>
   );

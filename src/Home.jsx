@@ -10,6 +10,8 @@ import RecommendationGrid from './components/Recs/RecommendationGrid';
 import ArticleGrid from './components/Recs/ArticleGrid';
 import LoadingSpinner from './components/LoadingSpinner'; // Import the LoadingSpinner component
 
+
+
 function Home() {
   const { currentUser } = useAuth();
   const [loading, setLoading] = useState(true);
@@ -40,7 +42,7 @@ function Home() {
         <>
           <HeroSection />
           <Features />
-          <Articles />
+          <ArticleGrid />
           <HowItWorks />
           <CTASection />
           <Testimonials />

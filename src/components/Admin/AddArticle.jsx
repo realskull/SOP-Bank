@@ -4,6 +4,7 @@ import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { collection, addDoc } from 'firebase/firestore';
 import { db } from '../../config/firebaseConfig';
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import '../../css/Admin/AddArticle.css'; // Reusing the same CSS file
 import DOMPurify from 'dompurify';
 import { lastAcademicLevels, fieldsOfStudy, languageTests, proficiencyOptions } from '../utils/options'; // Import predefined options
@@ -20,7 +21,16 @@ function AddArticle() {
     const [languageProficiencyTest, setLanguageProficiencyTest] = useState('');
     const [languageProficiencyScore, setLanguageProficiencyScore] = useState('');
     const [availableFunds, setAvailableFunds] = useState('');
+    const [thumbnail, setThumbnail] = useState(null); // State for the thumbnail file
+    const [thumbnailURL, setThumbnailURL] = useState(''); // State for the thumbnail URL
     const navigate = useNavigate();
+    const storage = getStorage();
+
+    const handleThumbnailChange = (e) => {
+        if (e.target.files[0]) {
+            setThumbnail(e.target.files[0]);
+        }
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -28,6 +38,14 @@ function AddArticle() {
         try {
             // Sanitize the content before storing it
             const sanitizedContent = DOMPurify.sanitize(content);
+
+            let thumbnailURL = '';
+            if (thumbnail) {
+                // Upload thumbnail to Firebase Storage
+                const thumbnailRef = ref(storage, `thumbnails/${thumbnail.name}`);
+                await uploadBytes(thumbnailRef, thumbnail);
+                thumbnailURL = await getDownloadURL(thumbnailRef);
+            }
 
             await addDoc(collection(db, 'Articles'), {
                 title,
@@ -39,6 +57,7 @@ function AddArticle() {
                 languageProficiencyTest,
                 languageProficiencyScore,
                 availableFunds,
+                thumbnail: thumbnailURL, // Save the thumbnail URL
                 createdAt: new Date()
             });
             navigate('/admin'); // Redirect to homepage or articles list
@@ -48,7 +67,7 @@ function AddArticle() {
     };
 
     return (
-        <div className="addEssayContainer"> {/* Reusing the CSS class */}
+        <div className="addArticleContainer"> {/* Adjust class name if needed */}
             <h2>Add Your Article</h2>
             <form onSubmit={handleSubmit}>
                 <div className="formGroup">
@@ -161,6 +180,15 @@ function AddArticle() {
                         id="availableFunds"
                         value={availableFunds}
                         onChange={(e) => setAvailableFunds(e.target.value)}
+                    />
+                </div>
+                <div className="formGroup">
+                    <label htmlFor="thumbnail">Thumbnail:</label>
+                    <input
+                        type="file"
+                        id="thumbnail"
+                        accept="image/*"
+                        onChange={handleThumbnailChange}
                     />
                 </div>
                 <button type="submit" className={`${styles.button} ${styles.buttonPrimary}`}>Submit Article</button>

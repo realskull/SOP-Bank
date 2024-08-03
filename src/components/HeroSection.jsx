@@ -9,7 +9,7 @@ function HeroSection() {
             <div className="hero-content">
                 <h1>Welcome to SOP Bank</h1>
                 <p>Your gateway to exemplary essays and personalized samples.</p>
-                <a href="#upload" className={`${styles.button} ${styles.buttonPrimary}`}>Upload Your Essay</a>
+                <a href="/add-essay" className={`${styles.button} ${styles.buttonPrimary}`}>Upload Your Essay</a>
                 <a href="#features" className={`${styles.button} ${styles.buttonPrimary}`}>Explore Features</a>
             </div>
 
