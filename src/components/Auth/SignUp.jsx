@@ -191,7 +191,7 @@ function SignUp() {
                   onChange={(e) => setLastAcademicLevel(e.target.value)}
                   required
                 >
-                  <option value="">Select...</option>
+                  <option value="" disabled>Select...</option>
                   {lastAcademicLevels.map((level) => (
                     <option key={level} value={level}>
                       {level}
@@ -206,7 +206,7 @@ function SignUp() {
                   onChange={(e) => setFieldOfStudy(e.target.value)}
                   required
                 >
-                  <option value="">Select...</option>
+                  <option value="" disabled>Select...</option>
                   {fieldsOfStudy.map((field) => (
                     <option key={field} value={field}>
                       {field}
@@ -233,7 +233,7 @@ function SignUp() {
                   }}
                   required
                 >
-                  <option value="">Select...</option>
+                  <option value="" disabled>Select...</option>
                   {languageTests.map((test) => (
                     <option key={test.value} value={test.value}>
                       {test.label}
@@ -249,7 +249,7 @@ function SignUp() {
                     onChange={(e) => setLanguageProficiencyScore(e.target.value)}
                     required
                   >
-                    <option value="">Select...</option>
+                    <option value="" disabled>Select...</option>
                     {proficiencyOptions[languageProficiencyTest]?.map((option) => (
                       <option key={option} value={option}>
                         {option}

@@ -37,19 +37,19 @@ const RecommendationGrid = () => {
               let priorityScore = 0;
 
               // Apply field match conditions
-              if (data.fieldOfStudy === userData.fieldOfStudy) {
+              if (data.fieldOfStudy === userData.fieldOfStudy || data.fieldOfStudy === '') {
                 priorityScore += 100;
                 matchingFields++;
               }
-              if (data.lastAcademicLevel === userData.lastAcademicLevel) {
+              if (data.lastAcademicLevel === userData.lastAcademicLevel || data.lastAcademicLevel === '') {
                 priorityScore += 80;
                 matchingFields++;
               }
-              if (Math.abs(data.averageGPA - userData.averageGPA) <= 0.5) {
+              if (Math.abs(data.averageGPA - userData.averageGPA) <= 0.5 || data.averageGPA === '') {
                 priorityScore += 60;
                 matchingFields++;
               }
-              if (data.availableFunds === userData.availableFunds) {
+              if (data.availableFunds === userData.availableFunds || data.availableFunds === '') {
                 priorityScore += 40;
                 matchingFields++;
               }
@@ -58,13 +58,17 @@ const RecommendationGrid = () => {
               return { id: doc.id, ...data, matchingFields, priorityScore };
             });
 
+            
             // Filter out essays with missing or irrelevant fields
-            const filteredEssays = fetchedEssays.filter(essay => 
+            const filteredEssays = fetchedEssays
+            
+            /*.filter(essay => 
               essay.fieldOfStudy && 
               essay.lastAcademicLevel &&
               (essay.averageGPA !== undefined) &&
               essay.availableFunds
             );
+            */
 
             // Sort by priority score and randomize the top 3
             const sortedEssays = filteredEssays.sort((a, b) => b.priorityScore - a.priorityScore);
@@ -74,6 +78,7 @@ const RecommendationGrid = () => {
             setRecommendations(shuffledEssays);
           }
         } else {
+          console.log("Fetching top 3 essays (generic)")
           // Fetch the latest 3 essays if not signed in
           const latestEssaysQuery = query(
             collection(db, 'Essays'),

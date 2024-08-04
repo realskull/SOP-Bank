@@ -1,13 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { db } from '../../config/firebaseConfig';
-import { collection, query, getDocs, orderBy, doc, deleteDoc, getDoc } from 'firebase/firestore';
+import { collection, query, getDocs, orderBy } from 'firebase/firestore';
 import Modal from '../Modal'; // Import the Modal component
 import '../../css/Admin/EssayList.css'; // Import the CSS file for essay list styling
 import { Link } from 'react-router-dom'; // Import Link from react-router-dom
-
-import LoadingOverlay from '../Recs/LoadingOverlay';
-
-import {commonToTestScore} from '../utils/options';
+import LoadingOverlay from '../Recs/LoadingOverlay'; // Import LoadingOverlay component
 
 const EssayList = () => {
   const [essays, setEssays] = useState([]);
@@ -15,40 +12,31 @@ const EssayList = () => {
   const [error, setError] = useState('');
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedEssayId, setSelectedEssayId] = useState(null);
-  const [authors, setAuthors] = useState({}); // To store author names
 
-  // Fetch all essays and authors
+  // Fetch essays from Firestore
   const fetchEssays = async () => {
     try {
       setLoading(true);
 
-      // Fetch essays
+      // Query to get essays, ordered by creation date
       const essaysQuery = query(
         collection(db, 'Essays'),
         orderBy('createdAt', 'desc') // Ensure 'createdAt' is a Firestore Timestamp
       );
 
+      // Execute the query and fetch documents
       const querySnapshot = await getDocs(essaysQuery);
+
+      // Map documents to an array of essay objects
       const fetchedEssays = querySnapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
       }));
 
+      // Update state with fetched essays
       setEssays(fetchedEssays);
-
-      // Fetch authors
-      const userIds = [...new Set(fetchedEssays.map(essay => essay.userId))];
-      const authorsData = {};
-      for (const userId of userIds) {
-        const userDocRef = doc(db, 'Users', userId);
-        const userDoc = await getDoc(userDocRef);
-        if (userDoc.exists()) {
-          authorsData[userId] = userDoc.data().name; // Fetch the 'name' field
-        }
-      }
-      setAuthors(authorsData);
     } catch (error) {
-      console.error('Error fetching essays:', error); // Log detailed error
+      // Handle and display errors
       setError(`Failed to load essays: ${error.message || error}`);
     } finally {
       setLoading(false);
@@ -59,8 +47,10 @@ const EssayList = () => {
     fetchEssays();
   }, []);
 
+  // Handle essay deletion
   const handleDeleteEssay = async () => {
     try {
+      // Delete the selected essay from Firestore
       await deleteDoc(doc(db, 'Essays', selectedEssayId));
       // Remove the deleted essay from the state
       setEssays(essays.filter(essay => essay.id !== selectedEssayId));
@@ -92,26 +82,15 @@ const EssayList = () => {
         <ul className="essay-list">
           {essays.map(essay => (
             <li key={essay.id} className="essay-item">
-              
-                <div className="essay-card">
-                  <div className="essay-header">
-                  <Link to={`/essay/${essay.id}`} className="essay-link"><h3 className="essay-title">{essay.title}</h3> </Link>
-                  </div>
-                  <p className="essay-description">{essay.description}</p>
-                  <div className="essay-tags">
-                    <span className="tag">Author: {authors[essay.userId] || 'Unknown'}</span>
-                    <span className="tag">{essay.lastAcademicLevel}</span>
-                    <span className="tag">{essay.fieldOfStudy}</span>
-                    <span className="tag">GPA: {essay.averageGPA}</span>
-                    <span className="tag">{essay.languageProficiencyTest}</span>
-                    <span className="tag">Band {commonToTestScore(essay.languageProficiencyScore,essay.languageProficiencyTest)}</span>
-                  </div>
-                  <button onClick={(e) => {
-                    e.stopPropagation();
-                    openDeleteModal(essay.id);
-                  }} className="delete-button">Delete</button>
+              <div className="essay-card">
+                <div className="essay-header">
+                  <Link to={`/essay/${essay.id}`} className="essay-link">
+                    <h3 className="essay-title">{essay.title}</h3>
+                  </Link>
                 </div>
-              
+                <p className="essay-description">{essay.description}</p>
+                <button onClick={() => openDeleteModal(essay.id)} className="delete-button">Delete</button>
+              </div>
             </li>
           ))}
         </ul>

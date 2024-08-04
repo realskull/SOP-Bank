@@ -21,6 +21,7 @@ import { RouteProvider } from './contexts/RouteContext';
 import NotFound from './components/NotFound';
 import AdminLayout from './components/Admin/AdminLayout'; // Import AdminLayout
 import MainLayout from './components/MainLayout';
+import SearchResults from './components/SearchResults';
 
 function App() {
   console.log("Rendering App");
@@ -37,6 +38,7 @@ function App() {
               <Route path="article/:id" element={<Article />} />
               <Route path="essay/:id" element={<EssayPage />} />
               <Route path="add-essay" element={<AddEssay />} />
+              <Route path="search" element={<SearchResults />} />
             </Route>
 
             {/* Admin routes */}

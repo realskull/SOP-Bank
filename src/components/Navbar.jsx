@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faCaretDown } from '@fortawesome/free-solid-svg-icons';
 import { Link, useNavigate } from 'react-router-dom';
@@ -8,6 +8,7 @@ import { signOutUser } from '../config/auth';
 
 function Navbar() {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
     const navigate = useNavigate();
     const { currentUser } = useAuth();
 
@@ -25,6 +26,12 @@ function Navbar() {
         setIsDropdownOpen(false); // Close the dropdown after logout
     };
 
+    const handleSearch = () => {
+        if (searchQuery.trim()) {
+            navigate(`/search?query=${encodeURIComponent(searchQuery)}`);
+        }
+    };
+
     return (
         <nav>
             <Link to="/" className="logo">
@@ -33,8 +40,14 @@ function Navbar() {
 
             <div className="search">
                 <label htmlFor="search">Search</label>
-                <input type="text" id="search" />
-                <span className="searchIcon">
+                <input
+                    type="text"
+                    id="search"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                />
+                <span className="searchIcon" onClick={handleSearch}>
                     <FontAwesomeIcon icon={faSearch} />
                 </span>
             </div>
@@ -61,7 +74,6 @@ function Navbar() {
                 {currentUser && currentUser.isAdmin ? (
                     <Link to="/admin" className="signInButton">Admin Panel</Link>
                 ) : null}
-
             </div>
         </nav>
     );

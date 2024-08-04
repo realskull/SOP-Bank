@@ -49,6 +49,7 @@
     position: absolute;
     right: 10px; /* Adjust as needed for spacing */
     top: 50%;
+    width: 100px;
     transform: translateY(-50%); /* Center vertically */
 }
 
