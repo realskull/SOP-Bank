@@ -14,6 +14,8 @@ const ArticleGrid = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
+  const [LIMIT, setLIMIT] = useState(3);
+
   useEffect(() => {
     const fetchArticles = async () => {
       setLoading(true);
@@ -49,6 +51,39 @@ const ArticleGrid = () => {
     fetchArticles();
   }, [currentUser]);
 
+
+  const fetchMore = async () => {
+    setLoading(true);
+    setError('');
+
+    try {
+      let articlesQuery;
+
+
+
+      // Fetch the latest 3 articles if not signed in
+      articlesQuery = query(
+        collection(db, 'Articles'),
+        orderBy('createdAt', 'desc'),
+        limit(LIMIT)
+      );
+      const querySnapshot = await getDocs(articlesQuery);
+
+      const latestArticles = querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+
+      setArticles(latestArticles);
+    }
+    catch (error) {
+      setError('Failed to load articles. ' + error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
   if (loading) return <div className="article-grid"><LoadingOverlay /></div>; // Use LoadingOverlay during loading state
   if (error) return <div className="error-message">{error}</div>;
 
@@ -63,6 +98,7 @@ const ArticleGrid = () => {
           thumbnail={article.thumbnail || placeholderImage} // Use placeholder image if thumbnail is not available
         />
       ))}
+      <button onClick={() => {setLIMIT(L => L + 3); if (!loading) fetchMore(); }}>Load More</button>
     </div>
   );
 };

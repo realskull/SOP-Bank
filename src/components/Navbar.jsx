@@ -38,20 +38,7 @@ function Navbar() {
                 <h1>SOP Bank</h1>
             </Link>
 
-            <div className="search">
-                <label htmlFor="search">Search</label>
-                <input
-                    type="text"
-                    id="search"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                />
-                <span className="searchIcon" onClick={handleSearch}>
-                    <FontAwesomeIcon icon={faSearch} />
-                </span>
-            </div>
-
+            
             <div className="userProfile">
                 {currentUser ? (
                     <div className="userInfo" onClick={toggleDropdown}>
